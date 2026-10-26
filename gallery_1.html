@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GALLERY | 小紫流虎</title>
+  <link rel="stylesheet" href="gallery.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="gallery.js" defer></script>
+</head>
+<body>
+<!-- <header class="top"><a href="index.html">小紫流虎 <small>OSHIRUKO</small></a><a href="index.html">← ホームへ戻る</a></header> -->
+<header class="site-header">
+  <a href="index.html">
+    <span>
+      <img class="name-logo-header" src="images/komurasaki_rogo_touka.png" alt="logo">
+    </span>
+  </a>
+  <a href="index.html">← ホームへ戻る</a>
+</header>
+<main class="wrap">
+<header class="heading"><p>ILLUSTRATION ARCHIVE</p><h1>GALLERY</h1><span>イラストギャラリー</span></header>
+<nav class="tabs" aria-label="イラストカテゴリ">
+<button class="active" data-category="fanart">ファンアート</button>
+<button data-category="copyright">版権イラスト</button>
+<button data-category="original">自身のイラスト＆創作</button>
+<button data-category="gift">みんなが描いてくれた自分のファンアート</button>
+</nav>
+<p class="description" id="description"></p>
+<section class="grid" id="grid"></section>
+<p class="empty" id="empty">このカテゴリにはまだ作品がありません。gallery.js に作品を追加してください。</p>
+</main>
+<footer>© <span id="year">2026</span> 小紫流虎. All rights reserved.</footer>
+<div class="viewer" id="viewer" aria-hidden="true" role="dialog" aria-modal="true">
+<button class="close" id="close" aria-label="閉じる">×</button>
+<button class="arrow prev" id="prev" aria-label="前の作品">‹</button>
+<figure><img id="large-image" alt=""><figcaption id="caption"></figcaption></figure>
+<button class="arrow next" id="next" aria-label="次の作品">›</button>
+</div>
+</body></html>

@@ -1,0 +1,174 @@
+
+/* Subpages: Contact / Guideline / Support */
+
+.subpage-header {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid rgba(190, 174, 224, 0.15);
+}
+
+.subpage-logo {
+  color: var(--lavender);
+  font-size: 18px;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+}
+
+.back-home {
+  color: var(--muted);
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.back-home:hover {
+  color: var(--lavender);
+}
+
+.subpage-main {
+  width: min(760px, calc(100% - 40px));
+  margin: 70px auto 100px;
+}
+
+.page-en-title {
+  margin: 0 0 12px;
+  color: var(--lavender);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+}
+
+.subpage-main h1 {
+  margin: 0;
+  color: var(--lavender);
+  font-size: clamp(26px, 5vw, 36px);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+.page-lead {
+  margin: 18px 0 40px;
+  color: var(--muted);
+  line-height: 2;
+  font-size: 14px;
+}
+
+.page-intro {
+  margin-bottom: 36px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 2.1;
+}
+
+.page-panel {
+  margin-top: 22px;
+  padding: 26px 28px;
+  border: 1px solid rgba(190, 174, 224, 0.17);
+  border-radius: 5px;
+  background: rgba(190, 174, 224, 0.035);
+}
+
+.page-panel h2 {
+  margin: 0 0 18px;
+  padding-left: 12px;
+  border-left: 2px solid var(--lavender);
+  color: var(--lavender);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+
+.page-panel p,
+.page-panel li {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 2.1;
+}
+
+.page-panel p + p {
+  margin-top: 14px;
+}
+
+.page-panel ul {
+  padding-left: 1.4em;
+}
+
+.page-panel li + li {
+  margin-top: 8px;
+}
+
+.page-link {
+  color: var(--lavender);
+  text-underline-offset: 4px;
+  overflow-wrap: anywhere;
+}
+
+.page-note {
+  opacity: 0.7;
+  font-size: 11px !important;
+}
+
+.support-message {
+  padding: 30px;
+}
+
+.support-option {
+  text-align: center;
+}
+
+.support-option .page-en-title {
+  margin-bottom: 10px;
+}
+
+.support-option h2 {
+  display: inline-block;
+  padding-left: 0;
+  border-left: none;
+}
+
+.support-button {
+  display: inline-block;
+  margin-top: 18px;
+  padding: 12px 26px;
+  border: 1px solid rgba(190, 174, 224, 0.4);
+  border-radius: 3px;
+  color: var(--lavender);
+  text-decoration: none;
+  font-size: 13px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.support-button:hover {
+  background: rgba(190, 174, 224, 0.09);
+  border-color: var(--lavender);
+}
+
+.support-closing {
+  margin-top: 36px;
+  color: var(--muted);
+  text-align: center;
+  font-size: 13px;
+  line-height: 2.2;
+}
+
+@media (max-width: 600px) {
+  .subpage-header {
+    padding: 20px;
+  }
+
+  .subpage-main {
+    margin-top: 46px;
+    margin-bottom: 64px;
+  }
+
+  .page-panel {
+    padding: 22px 20px;
+  }
+
+  .support-message {
+    padding: 24px 20px;
+  }
+}

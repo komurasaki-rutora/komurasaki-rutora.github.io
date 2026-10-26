@@ -1,0 +1,338 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GALLERY | 小紫流虎</title>
+  <style>
+    :root {
+      --bg: #171421;
+      --panel: #211b30;
+      --text: #f5efff;
+      --muted: #c5b8d8;
+      --accent: #c7a8e8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 36px 20px 60px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: sans-serif;
+    }
+
+    main {
+      width: min(100%, 1000px);
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-size: 12px;
+      letter-spacing: .2em;
+    }
+
+    h1 {
+      margin: 8px 0;
+      letter-spacing: .15em;
+    }
+
+    header p {
+      color: var(--muted);
+    }
+
+    .back {
+      display: inline-block;
+      margin-bottom: 22px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .tab {
+      padding: 12px 6px;
+      border: 1px solid #514463;
+      border-radius: 10px;
+      background: var(--panel);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .tab[aria-selected="true"] {
+      border-color: var(--accent);
+      background: #3b2e50;
+    }
+
+    #category-title {
+      margin-bottom: 16px;
+      color: var(--accent);
+      font-size: 17px;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .gallery-item {
+      display: block;
+      width: 100%;
+      padding: 0;
+      overflow: hidden;
+      aspect-ratio: 1;
+      border: 1px solid #40354f;
+      border-radius: 10px;
+      background: var(--panel);
+      cursor: pointer;
+    }
+
+    .gallery-item img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .25s ease;
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.04);
+    }
+
+    #message {
+      color: var(--muted);
+      text-align: center;
+    }
+
+    dialog {
+      width: min(92vw, 1000px);
+      max-width: none;
+      max-height: 92vh;
+      padding: 12px;
+      border: 1px solid #74628d;
+      border-radius: 14px;
+      background: #171421;
+      color: var(--text);
+    }
+
+    dialog::backdrop {
+      background: rgb(0 0 0 / 82%);
+    }
+
+    .lightbox-image {
+      display: block;
+      max-width: 100%;
+      max-height: 78vh;
+      margin: 0 auto;
+      object-fit: contain;
+    }
+
+    .lightbox-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .lightbox-controls button {
+      padding: 8px 14px;
+      border: 1px solid #514463;
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding-inline: 12px;
+      }
+
+      .tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .gallery-grid {
+        gap: 7px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <a class="back" href="index.html">← TOPへ戻る</a>
+
+    <header>
+      <div class="eyebrow">ILLUSTRATION ARCHIVE</div>
+      <h1>GALLERY</h1>
+      <p>小紫流虎のイラストギャラリー</p>
+    </header>
+
+    <nav class="tabs" id="tabs" aria-label="イラストカテゴリ"></nav>
+
+    <h2 id="category-title"></h2>
+    <section class="gallery-grid" id="gallery" aria-label="イラスト一覧"></section>
+    <p id="message" role="status">画像一覧を読み込み中…</p>
+  </main>
+
+  <dialog id="lightbox">
+    <img class="lightbox-image" id="lightbox-image" alt="">
+    <div class="lightbox-controls">
+      <button id="previous" type="button">← 前へ</button>
+      <button id="close" type="button">閉じる ✕</button>
+      <button id="next" type="button">次へ →</button>
+    </div>
+  </dialog>
+
+  <script>
+    const tabsElement = document.getElementById("tabs");
+    const galleryElement = document.getElementById("gallery");
+    const titleElement = document.getElementById("category-title");
+    const messageElement = document.getElementById("message");
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImage = document.getElementById("lightbox-image");
+
+    let galleryData = {};
+    let activeCategory = "";
+    let activeImages = [];
+    let activeIndex = 0;
+
+    async function init() {
+      try {
+        const response = await fetch("./images.json");
+
+        if (!response.ok) {
+          throw new Error("images.json を読み込めませんでした");
+        }
+
+        galleryData = await response.json();
+
+        const categories = Object.keys(galleryData);
+        if (categories.length === 0) {
+          throw new Error("カテゴリがありません");
+        }
+
+        tabsElement.replaceChildren();
+
+        for (const category of categories) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "tab";
+          button.textContent = galleryData[category].title;
+          button.addEventListener("click", () => showCategory(category));
+          tabsElement.appendChild(button);
+        }
+
+        showCategory(categories[0]);
+      } catch (error) {
+        messageElement.textContent =
+          "読み込みに失敗しました。images.json と画像フォルダを確認してください。";
+        console.error(error);
+      }
+    }
+
+    function showCategory(category) {
+      activeCategory = category;
+      activeImages = galleryData[category].images || [];
+
+      titleElement.textContent = galleryData[category].title;
+      galleryElement.replaceChildren();
+
+      for (const button of tabsElement.querySelectorAll(".tab")) {
+        const selected = button.textContent === galleryData[category].title;
+        button.setAttribute("aria-selected", String(selected));
+      }
+
+      for (const [index, image] of activeImages.entries()) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "gallery-item";
+        button.setAttribute("aria-label", image.alt || "イラストを拡大");
+
+        const img = document.createElement("img");
+        img.src = image.src;
+        img.alt = image.alt || "";
+        img.loading = "lazy";
+
+        img.addEventListener("error", () => {
+          button.hidden = true;
+        });
+
+        button.appendChild(img);
+        button.addEventListener("click", () => openLightbox(index));
+        galleryElement.appendChild(button);
+      }
+
+      messageElement.textContent = activeImages.length
+        ? `${activeImages.length} 枚のイラスト`
+        : "このカテゴリには、まだ画像がありません。";
+    }
+
+    function openLightbox(index) {
+      activeIndex = index;
+      updateLightbox();
+
+      if (!lightbox.open) {
+        lightbox.showModal();
+      }
+    }
+
+    function updateLightbox() {
+      const image = activeImages[activeIndex];
+      if (!image) return;
+
+      lightboxImage.src = image.src;
+      lightboxImage.alt = image.alt || "";
+    }
+
+    document.getElementById("close").addEventListener("click", () => {
+      lightbox.close();
+    });
+
+    document.getElementById("previous").addEventListener("click", () => {
+      if (!activeImages.length) return;
+      activeIndex = (activeIndex - 1 + activeImages.length) % activeImages.length;
+      updateLightbox();
+    });
+
+    document.getElementById("next").addEventListener("click", () => {
+      if (!activeImages.length) return;
+      activeIndex = (activeIndex + 1) % activeImages.length;
+      updateLightbox();
+    });
+
+    lightbox.addEventListener("click", (event) => {
+      if (event.target === lightbox) lightbox.close();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (!lightbox.open) return;
+
+      if (event.key === "ArrowLeft") {
+        document.getElementById("previous").click();
+      } else if (event.key === "ArrowRight") {
+        document.getElementById("next").click();
+      }
+    });
+
+    init();
+  </script>
+</body>
+</html>
